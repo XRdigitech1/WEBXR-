@@ -164,7 +164,7 @@ class App{
                 self.knight.remove(self.knight.object);
 
             }
-        })
+        });
         
         this.renderer.setAnimationLoop( this.render.bind(this) );
     }
