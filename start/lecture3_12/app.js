@@ -157,7 +157,7 @@ class App{
             })
         });
 
-        session.addEventListener("end" function(){
+        session.addEventListener("end", function(){
             self.hitTestSourceRequested = false;
             self.hitTestSource = null;
             self.referenceSpace = null;
