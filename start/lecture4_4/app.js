@@ -111,7 +111,7 @@ class App{
                 self.scene.add(self.oldman);
 
                 self.LoadingBar.visible = false;
-                self.action = "Idle";
+                self.action = "idle";
 
                 const scale = 0.01;
 
