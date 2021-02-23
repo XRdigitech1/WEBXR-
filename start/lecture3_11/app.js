@@ -39,6 +39,7 @@ class App{
         this.controls.update();
         
         this.stats = new Stats();
+        document.body.appendChild(this.stats.dom);
         
         this.origin = new THREE.Vector3();
         this.euler = new THREE.Euler();
@@ -111,7 +112,7 @@ class App{
     createUI() {
         
         const config = {
-            panelSize: { width: 0.2, height: 0.05 },
+            panelSize: { width: 0.15, height: 0.038 },
             height: 128,
             info:{ type: "text" }
         }
@@ -143,7 +144,6 @@ class App{
         
         //Add gestures here
         this.gestures = new ControllerGestures(this.renderer);
-
         this.gestures.addEventListener( 'tap', (ev)=>{
             //console.log( 'tap' ); 
             self.ui.updateElement('info', 'tap' );
