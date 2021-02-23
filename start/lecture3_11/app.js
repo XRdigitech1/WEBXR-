@@ -158,7 +158,7 @@ class App{
 
         this.gestures.addEventListener('swipe' , (ev)=> {
             console.log(ev),
-            self.ui.updateElement('info', 'swipe ${ev.direction}');
+            self.ui.updateElement('info', `swipe ${ev.direction}`);
             if(self.knight.object.visible){
                 self.knight.object.visible = false;
                 self.knight.remove(self.knight.object);
