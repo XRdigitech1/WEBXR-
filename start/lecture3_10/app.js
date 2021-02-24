@@ -140,7 +140,7 @@ class App{
             
         }
         
-        const btn = new ARButton(this.renderer, {onSessionStart , onSessionEnd , sessionInit : {optionalFeatures: ['dom-overlay'], domoverlay : {root: document.body}}});
+        const btn = new ARButton(this.renderer, {onSessionStart , onSessionEnd , sessionInit : {optionalFeatures: ['dom-overlay'], domOverlay : {root: document.body}}});
 
         this.renderer.setAnimationLoop( this.render.bind(this) );
     }
