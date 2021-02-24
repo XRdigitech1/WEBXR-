@@ -39,7 +39,7 @@ class App{
         this.controls.update();
         
         this.stats = new Stats();
-        document.body.appendChild(this.stats.dom);
+        document.body.appendChild( this.stats.dom );
         
         this.origin = new THREE.Vector3();
         this.euler = new THREE.Euler();
@@ -66,13 +66,29 @@ class App{
 			function ( gltf ) {
 				const object = gltf.scene.children[5];
 				
-				self.tab = gltf.scene;
-                self.scene.add(gltf.scene);
-                self.tab.object.visible = false;
+				object.traverse(function(child){
+					if (child.isMesh){
+                        child.material.metalness = 0;
+                        child.material.roughness = 1;
+					}
+				});
 				
-				//self.table.action = 'Dance';
+				const options = {
+					object: object,
+					speed: 0.5,
+					animations: gltf.animations,
+					clip: gltf.animations[0],
+					app: self,
+					name: 'knight',
+					npc: false
+				};
+				
+				self.knight = new Player(options);
+                self.knight.object.visible = false;
+				
+				self.knight.action = 'Dance';
 				const scale = 0.003;
-				self.tab.object.scale.set(scale, scale, scale); 
+				self.knight.object.scale.set(scale, scale, scale); 
 				
                 self.loadingBar.visible = false;
 			},
@@ -124,65 +140,64 @@ class App{
             self.camera.remove( self.ui.mesh );
         }
         
-        const btn = new ARButton( this.renderer, { onSessionStart, onSessionEnd } );
+        const btn = new ARButton( this.renderer, { onSessionStart, onSessionEnd });//, sessionInit: { optionalFeatures: [ 'dom-overlay' ], domOverlay: { root: document.body } } } );
         
-        //Add gestures here
-        this.gestures = new ControllerGestures(this.renderer);
+        this.gestures = new ControllerGestures( this.renderer );
         this.gestures.addEventListener( 'tap', (ev)=>{
             //console.log( 'tap' ); 
             self.ui.updateElement('info', 'tap' );
-            if (!self.tab.object.visible){
-                self.tab.object.visible = true;
-                self.tab.object.position.set( 0, -0.3, -0.5 ).add( ev.position );
-                self.scene.add( self.tab.object ); 
+            if (!self.knight.object.visible){
+                self.knight.object.visible = true;
+                self.knight.object.position.set( 0, -0.3, -0.5 ).add( ev.position );
+                self.scene.add( self.knight.object ); 
             }
         });
-
-        this.gestures.addEventListener('swipe' , (ev)=> {
-            console.log(ev),
-            self.ui.updateElement('info', `swipe ${ev.direction}`);
-            if(self.tab.object.visible){
-                self.tab.object.visible = false;
-                self.tab.remove(self.tab.object);
-
-            }
+        this.gestures.addEventListener( 'doubletap', (ev)=>{
+            //console.log( 'doubletap'); 
+            self.ui.updateElement('info', 'doubletap' );
         });
-        this.gestures.addEventListener('pan' , (ev) =>{
-            console.log(ev);
-            if(ev.initialise !== undefined)
-            {
-                self.startPosition = self.tab.object.position.clone();
-
-            }
-            else
-            {
-                const pos = self.startPosition.clone().add(ev.delta.multiplyScalar(3));
-                self.tab.object.position.copy(pos);
-                self.ui.updateElement('info' , `pan x:${ev.delta.x.toFixed(3)} y:${ev.delta.y.toFixed(3)} z:${ev.delta.z.toFixed(3)}`);
+        this.gestures.addEventListener( 'press', (ev)=>{
+            //console.log( 'press' );    
+            self.ui.updateElement('info', 'press' );
+        });
+        this.gestures.addEventListener( 'pan', (ev)=>{
+            //console.log( ev );
+            if (ev.initialise !== undefined){
+                self.startPosition = self.knight.object.position.clone();
+            }else{
+                const pos = self.startPosition.clone().add( ev.delta.multiplyScalar(3) );
+                self.knight.object.position.copy( pos );
+                self.ui.updateElement('info', `pan x:${ev.delta.x.toFixed(3)}, y:${ev.delta.y.toFixed(3)}, x:${ev.delta.z.toFixed(3)}` );
+            } 
+        });
+        this.gestures.addEventListener( 'swipe', (ev)=>{
+            //console.log( ev );   
+            self.ui.updateElement('info', `swipe ${ev.direction}` );
+            if (self.knight.object.visible){
+                self.knight.object.visible = false;
+                self.scene.remove( self.knight.object ); 
             }
         });
         this.gestures.addEventListener( 'pinch', (ev)=>{
             //console.log( ev );  
             if (ev.initialise !== undefined){
-                self.startScale = self.tab.object.scale.clone();
+                self.startScale = self.knight.object.scale.clone();
             }else{
                 const scale = self.startScale.clone().multiplyScalar(ev.scale);
-                self.tab.object.scale.copy( scale );
+                self.knight.object.scale.copy( scale );
                 self.ui.updateElement('info', `pinch delta:${ev.delta.toFixed(3)} scale:${ev.scale.toFixed(2)}` );
             }
         });
-        this.gestures.addEventListener("rotate" , (ev) =>{
-            if(ev.initialise !== undefined){
-               self.startQuaternion = self.tab.object.quaternion.clone();
+        this.gestures.addEventListener( 'rotate', (ev)=>{
+            //      sconsole.log( ev ); 
+            if (ev.initialise !== undefined){
+                self.startQuaternion = self.knight.object.quaternion.clone();
+            }else{
+                self.knight.object.quaternion.copy( self.startQuaternion );
+                self.knight.object.rotateY( ev.theta );
+                self.ui.updateElement('info', `rotate ${ev.theta.toFixed(3)}`  );
             }
-            else
-            {
-                self.tab.object.quaternion.copy(self.startQuaternion);
-                self.tab.object.rotateY(ev.theta);
-                self.ui.updateElement("info" , `rotate ${ev.theta.toFixed(3)}`);
-            }
-            
-        })
+        });
         
         this.renderer.setAnimationLoop( this.render.bind(this) );
     }
@@ -200,7 +215,7 @@ class App{
             this.gestures.update();
             this.ui.update();
         }
-        if ( this.tab !== undefined ) this.tab.update(dt);
+        if ( this.knight !== undefined ) this.knight.update(dt);
         this.renderer.render( this.scene, this.camera );
     }
 }
