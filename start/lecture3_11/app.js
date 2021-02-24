@@ -199,7 +199,7 @@ class App{
             }
         });
         
-        this.renderer.setAnimationLoop( this.render.bind(this) );
+        //this.renderer.setAnimationLoop( this.render.bind(this) );
     }
     
     resize(){
