@@ -66,29 +66,13 @@ class App{
 			function ( gltf ) {
 				const object = gltf.scene.children[5];
 				
-				object.traverse(function(child){
-					if (child.isMesh){
-                        child.material.metalness = 0;
-                        child.material.roughness = 1;
-					}
-				});
-				
-				const options = {
-					object: object,
-					speed: 0.5,
-					//animations: gltf.animations,
-					//clip: gltf.animations[0],
-					app: self,
-					name: 'table',
-					npc: false
-				};
-				
-				self.table = new Player(options);
-                self.table.object.visible = false;
+				self.tab = gltf.scene;
+                self.scene.add(gltf.scene);
+                self.tab.object.visible = false;
 				
 				//self.table.action = 'Dance';
 				const scale = 0.003;
-				self.table.object.scale.set(scale, scale, scale); 
+				self.tab.object.scale.set(scale, scale, scale); 
 				
                 self.loadingBar.visible = false;
 			},
@@ -147,19 +131,19 @@ class App{
         this.gestures.addEventListener( 'tap', (ev)=>{
             //console.log( 'tap' ); 
             self.ui.updateElement('info', 'tap' );
-            if (!self.table.object.visible){
-                self.table.object.visible = true;
-                self.table.object.position.set( 0, -0.3, -0.5 ).add( ev.position );
-                self.scene.add( self.table.object ); 
+            if (!self.tab.object.visible){
+                self.tab.object.visible = true;
+                self.tab.object.position.set( 0, -0.3, -0.5 ).add( ev.position );
+                self.scene.add( self.tab.object ); 
             }
         });
 
         this.gestures.addEventListener('swipe' , (ev)=> {
             console.log(ev),
             self.ui.updateElement('info', `swipe ${ev.direction}`);
-            if(self.table.object.visible){
-                self.table.object.visible = false;
-                self.table.remove(self.table.object);
+            if(self.tab.object.visible){
+                self.tab.object.visible = false;
+                self.tab.remove(self.tab.object);
 
             }
         });
@@ -167,34 +151,34 @@ class App{
             console.log(ev);
             if(ev.initialise !== undefined)
             {
-                self.startPosition = self.table.object.position.clone();
+                self.startPosition = self.tab.object.position.clone();
 
             }
             else
             {
                 const pos = self.startPosition.clone().add(ev.delta.multiplyScalar(3));
-                self.table.object.position.copy(pos);
+                self.tab.object.position.copy(pos);
                 self.ui.updateElement('info' , `pan x:${ev.delta.x.toFixed(3)} y:${ev.delta.y.toFixed(3)} z:${ev.delta.z.toFixed(3)}`);
             }
         });
         this.gestures.addEventListener( 'pinch', (ev)=>{
             //console.log( ev );  
             if (ev.initialise !== undefined){
-                self.startScale = self.table.object.scale.clone();
+                self.startScale = self.tab.object.scale.clone();
             }else{
                 const scale = self.startScale.clone().multiplyScalar(ev.scale);
-                self.table.object.scale.copy( scale );
+                self.tab.object.scale.copy( scale );
                 self.ui.updateElement('info', `pinch delta:${ev.delta.toFixed(3)} scale:${ev.scale.toFixed(2)}` );
             }
         });
         this.gestures.addEventListener("rotate" , (ev) =>{
             if(ev.initialise !== undefined){
-               self.startQuaternion = self.table.object.quaternion.clone();
+               self.startQuaternion = self.tab.object.quaternion.clone();
             }
             else
             {
-                self.table.object.quaternion.copy(self.startQuaternion);
-                self.table.object.rotateY(ev.theta);
+                self.tab.object.quaternion.copy(self.startQuaternion);
+                self.tab.object.rotateY(ev.theta);
                 self.ui.updateElement("info" , `rotate ${ev.theta.toFixed(3)}`);
             }
             
@@ -216,7 +200,7 @@ class App{
             this.gestures.update();
             this.ui.update();
         }
-        if ( this.table !== undefined ) this.table.update(dt);
+        if ( this.tab !== undefined ) this.tab.update(dt);
         this.renderer.render( this.scene, this.camera );
     }
 }
