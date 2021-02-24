@@ -133,14 +133,20 @@ class App{
         }
         
         function onSessionStart(){
-            
+            self.ui.mesh.position.set(0,-0.5,-1.1);
+            self.camera.add(self.ui.mesh);
         }
         
         function onSessionEnd(){
-            
+            self.camera.remove(self.ui.mesh);
         }
         
         const btn = new ARButton(this.renderer, {onSessionStart , onSessionEnd , sessionInit : {optionalFeatures: ['dom-overlay'], domOverlay : {root: document.body}}});
+        const controller = this.renderer.xr.getController(0);
+        controller.addEventListener('connected', onConnected);
+        this.scene.add(controller);
+        this.controller = controller;
+
 
         this.renderer.setAnimationLoop( this.render.bind(this) );
     }
@@ -163,8 +169,8 @@ class App{
         if (this.renderer.xr.isPresenting){
             const pos = this.controller.getWorldPosition( this.origin );
             this.euler.setFromQuaternion( this.controller.getWorldQuaternion( this.quaternion ));
-            
-            const msg = this.createMsg( pos, this.euler );
+            const rot = this.euler;
+            const msg = this.createMsg( pos, rot );
             this.ui.updateElement("msg", msg);
         }
         this.renderer.render( this.scene, this.camera );
