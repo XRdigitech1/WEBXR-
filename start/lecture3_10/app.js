@@ -143,7 +143,7 @@ class App{
         
         const btn = new ARButton(this.renderer,{onSessionStart , onSessionEnd, sessionInit: {optionalFeatures:['dom-overlay'], domOverlay:{root : document.body}}});
 
-        const controller = this.render.xr.getcontroller(0);
+        const controller = this.renderer.xr.getcontroller(0);
         controller.addEventListener("connected", onConnected);
 
         this.scene.add(controller);
