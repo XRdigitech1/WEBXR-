@@ -82,7 +82,7 @@ class App{
 			// called when loading has errors
 			function ( error ) {
 
-				console.log( error,message );
+				console.log( error.message );
 
 			}
 		);
