@@ -86,8 +86,8 @@ class App{
                 self.model.position.set( 0, 0, -1 );
 				self.scene.add( self.model );
 				
-                self.lense = self.model.getObjectByName( "LenseMag" );
-                self.lense.userData.startQuat = self.lense.quaternion.clone();
+                //self.lense = self.model.getObjectByName( "LenseMag" );
+                //self.lense.userData.startQuat = self.lense.quaternion.clone();
                 
                 
                 
