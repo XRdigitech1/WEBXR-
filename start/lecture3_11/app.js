@@ -64,33 +64,14 @@ class App{
 			`table.glb`,
 			// called when the resource is loaded
 			function ( gltf ) {
-				const object = gltf.scene;
-				
-				object.traverse(function(child){
-					if (child.isMesh){
-                        child.material.metalness = 0;
-                        child.material.roughness = 1;
-					}
-				});
-				
-				const options = {
-					object: object,
-					speed: 0.5,
-					//animations: gltf.animations,
-					//clip: gltf.animations[0],
-					app: self,
-					name: 'knight',
-					npc: false
-				};
-				
-				self.knight = new Player(options);
-                self.knight.object.visible = false;
-				
-				//self.knight.action = 'Dance';
-				const scale = 0.003;
-				self.knight.object.scale.set(scale, scale, scale); 
-				
+				self.model  = gltf.scene;
+                self.model.position.set(0,0,-1);
+                self.scene.add(self.model);
+                self.model.object.visible = false;
                 self.loadingBar.visible = false;
+				
+
+               
 			},
 			// called while loading is progressing
 			function ( xhr ) {
@@ -101,7 +82,7 @@ class App{
 			// called when loading has errors
 			function ( error ) {
 
-				console.log( 'An error happened' );
+				console.log( error,message );
 
 			}
 		);
@@ -146,10 +127,10 @@ class App{
         this.gestures.addEventListener( 'tap', (ev)=>{
             //console.log( 'tap' ); 
             self.ui.updateElement('info', 'tap' );
-            if (!self.knight.object.visible){
-                self.knight.object.visible = true;
-                self.knight.object.position.set( 0, -0.3, -0.5 ).add( ev.position );
-                self.scene.add( self.knight.object ); 
+            if (!self.model.object.visible){
+                self.model.object.visible = true;
+                self.model.object.position.set( 0, -0.3, -0.5 ).add( ev.position );
+                self.scene.add( self.model.object ); 
             }
         });
         this.gestures.addEventListener( 'doubletap', (ev)=>{
@@ -163,38 +144,38 @@ class App{
         this.gestures.addEventListener( 'pan', (ev)=>{
             //console.log( ev );
             if (ev.initialise !== undefined){
-                self.startPosition = self.knight.object.position.clone();
+                self.startPosition = self.model.object.position.clone();
             }else{
                 const pos = self.startPosition.clone().add( ev.delta.multiplyScalar(3) );
-                self.knight.object.position.copy( pos );
+                self.model.object.position.copy( pos );
                 self.ui.updateElement('info', `pan x:${ev.delta.x.toFixed(3)}, y:${ev.delta.y.toFixed(3)}, x:${ev.delta.z.toFixed(3)}` );
             } 
         });
         this.gestures.addEventListener( 'swipe', (ev)=>{
             //console.log( ev );   
             self.ui.updateElement('info', `swipe ${ev.direction}` );
-            if (self.knight.object.visible){
-                self.knight.object.visible = false;
-                self.scene.remove( self.knight.object ); 
+            if (self.model.object.visible){
+                self.model.object.visible = false;
+                self.scene.remove( self.model.object ); 
             }
         });
         this.gestures.addEventListener( 'pinch', (ev)=>{
             //console.log( ev );  
             if (ev.initialise !== undefined){
-                self.startScale = self.knight.object.scale.clone();
+                self.startScale = self.model.object.scale.clone();
             }else{
                 const scale = self.startScale.clone().multiplyScalar(ev.scale);
-                self.knight.object.scale.copy( scale );
+                self.model.object.scale.copy( scale );
                 self.ui.updateElement('info', `pinch delta:${ev.delta.toFixed(3)} scale:${ev.scale.toFixed(2)}` );
             }
         });
         this.gestures.addEventListener( 'rotate', (ev)=>{
             //      sconsole.log( ev ); 
             if (ev.initialise !== undefined){
-                self.startQuaternion = self.knight.object.quaternion.clone();
+                self.startQuaternion = self.model.object.quaternion.clone();
             }else{
-                self.knight.object.quaternion.copy( self.startQuaternion );
-                self.knight.object.rotateY( ev.theta );
+                self.model.object.quaternion.copy( self.startQuaternion );
+                self.model.object.rotateY( ev.theta );
                 self.ui.updateElement('info', `rotate ${ev.theta.toFixed(3)}`  );
             }
         });
@@ -215,8 +196,7 @@ class App{
             this.gestures.update();
             this.ui.update();
         }
-        /*if ( this.knight !== undefined ) this.knight.update(dt);
-        this.renderer.render( this.scene, this.camera );*/
+        
     }
 }
 
