@@ -61,7 +61,7 @@ class App{
 		// Load a GLTF resource
 		loader.load(
 			// resource URL
-			`table.glb`,
+			`Duck.glb`,
 			// called when the resource is loaded
 			function ( gltf ) {
 				self.model  = gltf.scene;
