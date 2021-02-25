@@ -79,20 +79,19 @@ class App{
         // Load a GLTF resource
 		loader.load(
 			// resource URL
-			`steampunk_camera.glb`,
+			`table.glb`,
 			// called when the resource is loaded
 			function ( gltf ) {
 				self.model = gltf.scene;
                 self.model.position.set( 0, 0, -1 );
 				self.scene.add( self.model );
 				
-                //self.lense = self.model.getObjectByName( "LenseMag" );
-                //self.lense.userData.startQuat = self.lense.quaternion.clone();
+                
                 
                 
                 
                 self.loadingBar.visible = false;
-                //self.renderer.setAnimationLoop( self.render.bind(self) );
+                
 			},
 			// called while loading is progressing
 			function ( xhr ) {
