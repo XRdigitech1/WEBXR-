@@ -89,15 +89,10 @@ class App{
                 self.lense = self.model.getObjectByName( "LenseMag" );
                 self.lense.userData.startQuat = self.lense.quaternion.clone();
                 
-                const mixer = new THREE.AnimationMixer( self.model );
-                const action = mixer.clipAction( gltf.animations[0] );
-                action.loop = THREE.LoopOnce;
-                self.action = action;
                 
-                self.mixers.push( mixer );
                 
                 self.loadingBar.visible = false;
-                self.renderer.setAnimationLoop( self.render.bind(self) );
+                //self.renderer.setAnimationLoop( self.render.bind(self) );
 			},
 			// called while loading is progressing
 			function ( xhr ) {
@@ -128,11 +123,7 @@ class App{
         const self = this;
         
         function onSelect() {
-            if ( !self.action.isRunning() ){
-                self.action.time = 0;
-                self.action.enabled = true;
-                self.action.play();
-            }
+            
         }
 
         this.controller = this.renderer.xr.getController( 0 );
@@ -148,7 +139,7 @@ class App{
         const self = this;
         if ( !this.renderer.xr.isPresenting) this.model.rotateY( 0.01 );
         
-        this.mixers.forEach( mixer => mixer.update(dt) );
+        //this.mixers.forEach( mixer => mixer.update(dt) );
         
         this.renderer.render( this.scene, this.camera );
     }
